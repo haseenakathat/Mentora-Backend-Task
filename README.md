@@ -2,110 +2,199 @@
 
 A simplified backend for a mentorship platform where parents, students, and mentors interact. This platform allows parents to create student accounts, mentors to teach lessons, and students to attend lessons through a booking system.
 
-## System Overview
+---
+
+# System Overview
 
 There are three types of users:
-- **Parent**: Can create student accounts and book lessons for their students
-- **Student**: Created by parents, can attend lessons
-- **Mentor**: Can create and teach lessons
 
-## Features
+* **Parent** – Can create student accounts and book lessons for their students
+* **Student** – Created by parents, can attend lessons
+* **Mentor** – Can create and teach lessons
 
-### 1. Authentication System
-- **POST /auth/signup**: Register as parent or mentor (students are created by parents)
-- **POST /auth/login**: JWT-based login
-- **GET /auth/me**: Get current user information
-- Password hashing with bcrypt
-- JWT authentication
+---
 
-### 2. Student Creation (Parent Only)
-- **POST /students**: Parents can create students under their profile
-- **GET /students**: Parents can view their students
-- Each student belongs to exactly one parent
+# Features
 
-### 3. Lesson Creation (Mentor Only)
-- **POST /lessons**: Mentors can create lessons
-- **GET /lessons**: View all available lessons
-- Fields: title, description, mentorId
+## 1. Authentication System
 
-### 4. Booking System
-- **POST /bookings**: Parents can assign students to lessons
-- Fields: studentId, lessonId
-- Authorization ensures parents can only book for their own students
+* `POST /auth/signup` – Register as parent or mentor (students are created by parents)
+* `POST /auth/login` – JWT-based login
+* `GET /auth/me` – Get current user information
 
-### 5. Session System
-- **POST /sessions**: Mentors can create sessions for their lessons
-- **GET /lessons/{id}/sessions**: Get all sessions for a specific lesson
-- Fields: lessonId, date, topic, summary
+Security:
 
-### 6. LLM Text Summarization (Required)
-- **POST /llm/summarize**: Summarize text using Google Gemini API
-- Returns 3-5 bullet points or short paragraph (max 120 words)
-- Input validation: 50-10,000 characters
-- Rate limiting: 10 requests per minute
-- Error handling for API failures
+* Password hashing with **bcrypt**
+* Authentication using **JWT tokens**
 
-## Tech Stack
+---
 
-- **Node.js** with Express.js
-- **MongoDB** with Mongoose ODM
-- **JWT** for authentication
-- **bcrypt** for password hashing
-- **Google Gemini API** for LLM summarization
-- **express-rate-limit** for API protection
+## 2. Student Creation (Parent Only)
 
-## Installation & Setup
+* `POST /students` – Parents can create students under their profile
+* `GET /students` – Parents can view their students
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or cloud instance)
-- Google Cloud account for Gemini API
+Rule:
 
-### Installation Steps
+* Each student belongs to exactly **one parent**
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-github-repo-url>
-   cd mentora-backend
-   ```
+---
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+## 3. Lesson Creation (Mentor Only)
 
-3. **Environment Setup**
-   Create a `.env` file in the root directory:
-   ```env
-   PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_secure_jwt_secret_key
-   GEMINI_API_KEY=your_google_gemini_api_key
-   ```
+* `POST /lessons` – Mentors can create lessons
+* `GET /lessons` – View all available lessons
 
-   **Note**: Never commit `.env` file to GitHub. It's already in `.gitignore`.
+Fields:
 
-4. **Get Google Gemini API Key**
-   - Go to [Google AI Studio](https://aistudio.google.com/)
-   - Sign in with Google account
-   - Click "Get started" → "Create API key"
-   - Copy the key (starts with `AIzaSy...`)
-   - Enable "Generative Language API" in Google Cloud Console if needed
+* `title`
+* `description`
+* `mentorId`
 
-5. **Start the server**
-   ```bash
-   npm start
-   ```
-   Server will run on `http://localhost:5000`
+---
 
-## API Documentation
+## 4. Booking System
 
-### Authentication Endpoints
+* `POST /bookings` – Parents can assign students to lessons
 
-#### POST /auth/signup
-Register a new user (parent or mentor only).
+Fields:
 
-**Request Body:**
+* `studentId`
+* `lessonId`
+
+Authorization ensures parents can **only book lessons for their own students**.
+
+---
+
+## 5. Session System
+
+* `POST /sessions` – Mentors create sessions
+* `GET /lessons/{id}/sessions` – Get sessions for a lesson
+
+Fields:
+
+* `lessonId`
+* `date`
+* `topic`
+* `summary`
+
+---
+
+## 6. LLM Text Summarization
+
+* `POST /llm/summarize`
+
+Summarizes text using **Google Gemini API**.
+
+Rules:
+
+* Returns **3–5 bullet points** or a **short paragraph**
+* Maximum **120 words**
+
+Validation:
+
+* Minimum text length: **50 characters**
+* Maximum text length: **10,000 characters**
+
+Protection:
+
+* **Rate limiting:** 10 requests per minute
+* Proper error handling for API failures
+
+---
+
+# Tech Stack
+
+* **Node.js**
+* **Express.js**
+* **MongoDB**
+* **Mongoose**
+* **JWT Authentication**
+* **bcrypt Password Hashing**
+* **Google Gemini API**
+* **express-rate-limit**
+
+---
+
+# Installation & Setup
+
+## Prerequisites
+
+* Node.js (v14 or higher)
+* MongoDB (local or cloud)
+* Google Cloud account for Gemini API
+
+---
+
+## Installation Steps
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd mentora-backend
+```
+
+---
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Environment Setup
+
+Create a `.env` file in the root directory.
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_jwt_secret_key
+GEMINI_API_KEY=your_google_gemini_api_key
+```
+
+⚠️ Never commit `.env` to GitHub.
+
+---
+
+### 4. Get Google Gemini API Key
+
+1. Go to https://aistudio.google.com
+2. Sign in with Google
+3. Click **Get Started**
+4. Create API Key
+5. Copy the key (starts with `AIzaSy...`)
+6. Enable **Generative Language API**
+
+---
+
+### 5. Start the server
+
+```bash
+npm start
+```
+
+Server runs on:
+
+```
+http://localhost:5000
+```
+
+---
+
+# API Documentation
+
+## Authentication
+
+### Signup
+
+```
+POST /auth/signup
+```
+
 ```json
 {
   "name": "John Doe",
@@ -115,17 +204,22 @@ Register a new user (parent or mentor only).
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "message": "User registered successfully"
 }
 ```
 
-#### POST /auth/login
-Login with email and password.
+---
 
-**Request Body:**
+### Login
+
+```
+POST /auth/login
+```
+
 ```json
 {
   "email": "john@example.com",
@@ -133,22 +227,30 @@ Login with email and password.
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "token": "jwt_token_here"
 }
 ```
 
-#### GET /auth/me
-Get current user information (requires authentication).
+---
 
-**Headers:**
+### Get Current User
+
 ```
-Authorization: Bearer <jwt_token>
+GET /auth/me
 ```
 
-**Response:**
+Header:
+
+```
+Authorization: Bearer <token>
+```
+
+Response:
+
 ```json
 {
   "_id": "user_id",
@@ -158,41 +260,38 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-### Student Management
+---
 
-#### POST /students
-Create a new student (parent only).
+# Student Management
 
-**Headers:**
+### Create Student
+
 ```
-Authorization: Bearer <jwt_token>
+POST /students
 ```
 
-**Request Body:**
+Header:
+
+```
+Authorization: Bearer <token>
+```
+
 ```json
 {
   "name": "Alice Doe"
 }
 ```
 
-**Response:**
-```json
-{
-  "_id": "student_id",
-  "name": "Alice Doe",
-  "parentId": "parent_id"
-}
+---
+
+### Get Students
+
+```
+GET /students
 ```
 
-#### GET /students
-Get all students belonging to the authenticated parent.
+Response:
 
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
-
-**Response:**
 ```json
 [
   {
@@ -203,65 +302,41 @@ Authorization: Bearer <jwt_token>
 ]
 ```
 
-### Lesson Management
+---
 
-#### POST /lessons
-Create a new lesson (mentor only).
+# Lesson Management
 
-**Headers:**
+### Create Lesson
+
 ```
-Authorization: Bearer <jwt_token>
+POST /lessons
 ```
 
-**Request Body:**
 ```json
 {
   "title": "Introduction to Algebra",
-  "description": "Learn basic algebraic concepts and equations"
+  "description": "Learn basic algebraic concepts"
 }
 ```
 
-**Response:**
-```json
-{
-  "_id": "lesson_id",
-  "title": "Introduction to Algebra",
-  "description": "Learn basic algebraic concepts and equations",
-  "mentorId": "mentor_id"
-}
+---
+
+### Get Lessons
+
+```
+GET /lessons
 ```
 
-#### GET /lessons
-Get all available lessons.
+---
 
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
+# Booking System
 
-**Response:**
-```json
-[
-  {
-    "_id": "lesson_id",
-    "title": "Introduction to Algebra",
-    "description": "Learn basic algebraic concepts and equations",
-    "mentorId": "mentor_id"
-  }
-]
+### Create Booking
+
+```
+POST /bookings
 ```
 
-### Booking System
-
-#### POST /bookings
-Book a lesson for a student (parent only, for their own students).
-
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
-
-**Request Body:**
 ```json
 {
   "studentId": "student_id",
@@ -269,80 +344,51 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-**Response:**
-```json
-{
-  "_id": "booking_id",
-  "studentId": "student_id",
-  "lessonId": "lesson_id"
-}
+---
+
+# Session Management
+
+### Create Session
+
+```
+POST /sessions
 ```
 
-### Session Management
-
-#### POST /sessions
-Create a session for a lesson (mentor only, for their own lessons).
-
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
-
-**Request Body:**
 ```json
 {
   "lessonId": "lesson_id",
   "date": "2026-03-15",
   "topic": "Solving Linear Equations",
-  "summary": "Covered basic linear equation solving techniques"
+  "summary": "Covered linear equation techniques"
 }
 ```
 
-**Response:**
+---
+
+### Get Lesson Sessions
+
+```
+GET /lessons/:id/sessions
+```
+
+---
+
+# LLM Summarization
+
+### Summarize Text
+
+```
+POST /llm/summarize
+```
+
 ```json
 {
-  "_id": "session_id",
-  "lessonId": "lesson_id",
-  "date": "2026-03-15T00:00:00.000Z",
-  "topic": "Solving Linear Equations",
-  "summary": "Covered basic linear equation solving techniques"
+  "text": "Your text to summarize here..."
 }
 ```
 
-#### GET /lessons/{id}/sessions
-Get all sessions for a specific lesson.
+Response:
 
-**Headers:**
-```
-Authorization: Bearer <jwt_token>
-```
-
-**Response:**
-```json
-[
-  {
-    "_id": "session_id",
-    "lessonId": "lesson_id",
-    "date": "2026-03-15T00:00:00.000Z",
-    "topic": "Solving Linear Equations",
-    "summary": "Covered basic linear equation solving techniques"
-  }
-]
-```
-
-### LLM Summarization
-
-#### POST /llm/summarize
-Summarize text using Google Gemini API.
-
-**Request Body:**
-```json
-{
-  "text": "Your text to summarize here (minimum 50 characters, maximum 10,000 characters)"
-}
-```
-
-**Response:**
 ```json
 {
   "summary": "• Key point 1\n• Key point 2\n• Key point 3",
@@ -350,224 +396,140 @@ Summarize text using Google Gemini API.
 }
 ```
 
-**Error Responses:**
-- `400 Bad Request`: Text too short (< 50 chars) or too long (> 10,000 chars)
-- `413 Payload Too Large`: Text exceeds 10,000 characters
-- `429 Too Many Requests`: Rate limit exceeded (10 requests/minute)
-- `502 Bad Gateway`: LLM service error
+---
 
-## Security Features
+# Security Features
 
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt with salt rounds
-- **Role-based Access**: Different permissions for parents and mentors
-- **Input Validation**: Comprehensive validation on all endpoints
-- **Rate Limiting**: 10 requests per minute on LLM endpoint
-- **Environment Variables**: Sensitive data stored securely
+* JWT Authentication
+* bcrypt Password Hashing
+* Role-based Access Control
+* Input Validation
+* Rate Limiting (LLM endpoint)
 
-## Database Design
+---
 
-### User Collection
+# Database Design
+
+## User
+
 ```javascript
 {
-  name: String (required),
-  email: String (required, unique),
-  password: String (required, hashed),
-  role: String (enum: ['parent', 'mentor'], required)
+  name: String,
+  email: String,
+  password: String,
+  role: ['parent', 'mentor']
 }
 ```
 
-### Student Collection
+---
+
+## Student
+
 ```javascript
 {
-  name: String (required),
-  parentId: ObjectId (ref: 'User', required)
+  name: String,
+  parentId: ObjectId
 }
 ```
 
-### Lesson Collection
+---
+
+## Lesson
+
 ```javascript
 {
-  title: String (required),
-  description: String (required),
-  mentorId: ObjectId (ref: 'User', required)
+  title: String,
+  description: String,
+  mentorId: ObjectId
 }
 ```
 
-### Booking Collection
+---
+
+## Booking
+
 ```javascript
 {
-  studentId: ObjectId (ref: 'Student', required),
-  lessonId: ObjectId (ref: 'Lesson', required)
+  studentId: ObjectId,
+  lessonId: ObjectId
 }
 ```
 
-### Session Collection
+---
+
+## Session
+
 ```javascript
 {
-  lessonId: ObjectId (ref: 'Lesson', required),
-  date: Date (required),
-  topic: String (required),
-  summary: String (required)
+  lessonId: ObjectId,
+  date: Date,
+  topic: String,
+  summary: String
 }
 ```
 
-## Testing
+---
 
-### Using Postman
-1. Import the `mentora-api.postman_collection.json` file
-2. Set base URL to `http://localhost:5000`
-3. Test authentication first, then other endpoints
-4. Use JWT tokens in Authorization headers for protected routes
+# Testing
 
-### Manual Testing
+## Using Postman
+
+1. Import `mentora-api.postman_collection.json`
+2. Set base URL:
+
+```
+http://localhost:5000
+```
+
+3. Test authentication first
+4. Use JWT tokens for protected routes
+
+---
+
+## Manual Testing
+
 ```bash
-# Test LLM endpoint
 curl -X POST http://localhost:5000/llm/summarize \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Your test text here with at least 50 characters..."}'
+-H "Content-Type: application/json" \
+-d '{"text": "Your test text with at least 50 characters..."}'
 ```
 
-## Deployment
+---
 
-### Environment Variables for Production
+# Deployment
+
+## Production Environment Variables
+
 ```env
 PORT=5000
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/mentora
-JWT_SECRET=your_super_secure_jwt_secret_here
-GEMINI_API_KEY=your_gemini_api_key_here
+MONGO_URI=mongodb_connection_string
+JWT_SECRET=secure_jwt_secret
+GEMINI_API_KEY=gemini_api_key
 NODE_ENV=production
 ```
 
-### Deployment Steps
-1. Set up MongoDB database
+Deployment Steps:
+
+1. Set up MongoDB
 2. Configure environment variables
-3. Deploy to hosting service (Heroku, Railway, etc.)
-4. Set up proper CORS and security headers
-5. Enable HTTPS in production
+3. Deploy to hosting (Railway, Render, etc.)
+4. Enable HTTPS
+5. Configure CORS and security headers
 
-## Evaluation Criteria Met
+---
 
-✅ **Code Structure**: Clean separation of concerns with MVC pattern
-✅ **Database Design**: Proper MongoDB schema with relationships
-✅ **API Clarity**: RESTful endpoints with consistent naming
-✅ **Security Practices**: JWT auth, password hashing, input validation
-✅ **Scalability Thinking**: Rate limiting, efficient queries, proper indexing
-✅ **Documentation Quality**: Comprehensive README with examples
+# Evaluation Criteria Met
 
-## Bonus Features Implemented
+* Clean code structure
+* Proper database design
+* RESTful API structure
+* Security best practices
+* Rate limiting
+* LLM integration
+* Comprehensive documentation
 
-- **Role-based Permissions**: Strict access control for parents/mentors
-- **Input Validation**: Comprehensive validation on all endpoints
-- **Error Handling**: Proper error responses and logging
-- **Rate Limiting**: Protection against abuse
-- **LLM Integration**: Working Google Gemini API integration
+---
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
+# License
 
 This project is for educational purposes as part of the Mentora platform development.
-
-### Bookings
-- `POST /bookings` - Create booking (parent only)
-
-### Sessions
-- `POST /sessions` - Create session (mentor only)
-- `GET /lessons/:id/sessions` - Get sessions for a lesson
-
-### LLM
-- `POST /llm/summarize` - Summarize text (rate limited)
-
-## API Documentation
-
-### Signup
-```json
-POST /auth/signup
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "role": "parent" // or "mentor"
-}
-```
-
-### Login
-```json
-POST /auth/login
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
-
-### Create Student
-```json
-POST /students
-Authorization: Bearer <token>
-{
-  "name": "Jane Doe"
-}
-```
-
-### Create Lesson
-```json
-POST /lessons
-Authorization: Bearer <token>
-{
-  "title": "Math Lesson",
-  "description": "Basic algebra"
-}
-```
-
-### Create Booking
-```json
-POST /bookings
-Authorization: Bearer <token>
-{
-  "studentId": "student_id",
-  "lessonId": "lesson_id"
-}
-```
-
-### Create Session
-```json
-POST /sessions
-Authorization: Bearer <token>
-{
-  "lessonId": "lesson_id",
-  "date": "2023-12-01",
-  "topic": "Algebra",
-  "summary": "Covered basic equations"
-}
-```
-
-### Summarize Text
-```json
-POST /llm/summarize
-{
-  "text": "Your text here..."
-}
-```
-
-## Security
-
-- Passwords are hashed with bcrypt
-- JWT tokens for authentication
-- Rate limiting on LLM endpoint (10 requests/minute)
-- Input validation on all endpoints
-
-## Assumptions
-
-- Students are created only by parents
-- Lessons and sessions are managed by mentors
-- Bookings are made by parents for their students
-- LLM summarization uses OpenAI GPT-4o-mini, returns 3-5 bullet points
-- Text length limits: 50-10000 characters#   M e n t o r a - B a c k e n d - T a s k  
- 
